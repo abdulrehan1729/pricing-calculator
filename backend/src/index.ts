@@ -9,17 +9,17 @@ const app = express();
 const PORT = process.env.PORT || 4000
 
 
-app.use(cors);
+app.use(cors());
 app.use(express.json())
 
-app.get('/health',  (_req, res)=>{
-    res.json({status: 'ok'})
-})
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
 
 app.use(errorHandler);
 
 connectDB().then(()=>{
     app.listen(PORT, ()=>{
-        console.log("Server is running on port: " + PORT)
+        console.log(`Server is running on port: ${PORT} for health check go on : http://localhost:4000/health`)
     })
 })
