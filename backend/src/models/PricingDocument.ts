@@ -7,14 +7,14 @@ export interface ILineItem {
     _id: Types.ObjectId;
     description: string;
     quantity: number;
-    unitPriceCents: number;
+    unitPrice: number;
     discountType: DiscountType;
-    discountValue: number; // percent (0-100) if discountType is 'percent', cents if 'fixed'
+    discountValue: number; // percent (0-100) if discountType is 'percent', currency amount if 'fixed'
     taxPercent: number; // 0 if none
-    subtotalCents: number;
-    discountAmountCents: number;
-    taxAmountCents: number;
-    lineTotalCents: number;
+    subtotal: number;
+    discountAmount: number;
+    taxAmount: number;
+    lineTotal: number;
 }
 
 export interface IPricingDocument extends MongooseDocument {
@@ -24,10 +24,10 @@ export interface IPricingDocument extends MongooseDocument {
     issueDate: Date;
     status: DocStatus;
     lineItems: ILineItem[];
-    subtotalCents: number;
-    totalDiscountCents: number;
-    totalTaxCents: number;
-    grandTotalCents: number;
+    subtotal: number;
+    totalDiscount: number;
+    totalTax: number;
+    grandTotal: number;
     createdAt: Date;
     upatedAt: Date;
 }
@@ -35,14 +35,14 @@ export interface IPricingDocument extends MongooseDocument {
 const lineItemSchema = new Schema<ILineItem>({
     description: { type: String, required: true, trim: true },
     quantity: { type: Number, required: true, min: 1 },
-    unitPriceCents: { type: Number, required: true, min: 0 },
+    unitPrice: { type: Number, required: true, min: 0 },
     discountType: { type: String, enum: ["fixed", "percent", null], default: null },
     discountValue: { type: Number, default: 0, min: 0 },
     taxPercent: { type: Number, default: 0, min: 0 },
-    subtotalCents: { type: Number, required: true },
-    discountAmountCents: { type: Number, required: true },
-    taxAmountCents: { type: Number, required: true },
-    lineTotalCents: { type: Number, required: true },
+    subtotal: { type: Number, required: true },
+    discountAmount: { type: Number, required: true },
+    taxAmount: { type: Number, required: true },
+    lineTotal: { type: Number, required: true },
 });
 
 const pricingDocumentSchema = new Schema<IPricingDocument>(
@@ -54,10 +54,10 @@ const pricingDocumentSchema = new Schema<IPricingDocument>(
         status: { type: String, enum: ["draft", "finalized"], default: "draft" },
         lineItems: { type: [lineItemSchema], default: [] },
 
-        subtotalCents: { type: Number, default: 0 },
-        totalDiscountCents: { type: Number, default: 0 },
-        totalTaxCents: { type: Number, default: 0 },
-        grandTotalCents: { type: Number, default: 0 },
+        subtotal: { type: Number, default: 0 },
+        totalDiscount: { type: Number, default: 0 },
+        totalTax: { type: Number, default: 0 },
+        grandTotal: { type: Number, default: 0 },
     },
     { timestamps: true },
 );

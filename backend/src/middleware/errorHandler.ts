@@ -6,12 +6,19 @@ export class AppError extends Error {
 
     constructor(message: string, statusCode = 400, details: unknown = null) {
         super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = 'AppError';
         this.statusCode = statusCode;
         this.details = details;
     }
 }
 
-export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction): void {
+export function errorHandler(err: unknown, _req: Request, res: Response, next: NextFunction): void {
+    if (res.headersSent) {
+        next(err);
+        return;
+    }
+
     if (isAppError(err)) {
         res.status(err.statusCode).json({
             error: err.message,
