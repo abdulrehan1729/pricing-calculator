@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler';
 import { connectDB } from './config/db';
+import authRoutes from './routes/authRoutes'
 
 dotenv.config()
 const app = express();
@@ -14,6 +15,12 @@ app.use(express.json())
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.use('/auth', authRoutes);
+
+app.use((_req, res) => {
+  res.status(404).json({ error: 'Route not found', details: null });
 });
 
 app.use(errorHandler);
