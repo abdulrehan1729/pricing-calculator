@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { logger } from '../utils/logger';
 
 export class AppError extends Error {
     statusCode: number;
@@ -20,6 +21,13 @@ export function errorHandler(err: unknown, _req: Request, res: Response, next: N
     }
 
     if (isAppError(err)) {
+        logger.warn('Request failed', {
+            requestId: res.locals.requestId,
+            method: _req.method,
+            path: _req.originalUrl,
+            statusCode: err.statusCode,
+            error: err,
+        });
         res.status(err.statusCode).json({
             error: err.message,
             details: err.details,
@@ -43,7 +51,12 @@ export function errorHandler(err: unknown, _req: Request, res: Response, next: N
         return;
     }
 
-    console.error('Unexpected Error:', err);
+    logger.error('Unexpected request error', {
+        requestId: res.locals.requestId,
+        method: _req.method,
+        path: _req.originalUrl,
+        error: err,
+    });
     res.status(500).json({
         error: 'Internal server error',
         details: null,

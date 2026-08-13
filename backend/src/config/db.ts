@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { logger } from '../utils/logger';
 
 
 export async function connectDB():Promise<void> {
@@ -8,11 +9,11 @@ export async function connectDB():Promise<void> {
         throw new Error('MongoDB uri is not found!!')
     }
     try {
-        console.log('connecting Database...')
+        logger.info('Connecting to MongoDB');
         await mongoose.connect(uri);
-        console.log('Mongo DB Connected.')
+        logger.info('MongoDB connected');
     } catch (error) {
-        console.error('MongoDB connection failed:', error);
+        logger.error('MongoDB connection failed', { error });
         throw error;
     }
 }

@@ -6,10 +6,30 @@ import { connectDB } from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import documentRoutes from "./routes/documentRoutes";
 import reportRoutes from "./routes/reportRoutes";
+import { logger } from "./utils/logger";
+import { randomUUID } from "crypto";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+app.use((req, res, next) => {
+    const requestId = randomUUID();
+    const startedAt = performance.now();
+    res.locals.requestId = requestId;
+    res.setHeader("X-Request-Id", requestId);
+
+    res.on("finish", () => {
+        logger.info("HTTP request completed", {
+            requestId,
+            method: req.method,
+            path: req.originalUrl,
+            statusCode: res.statusCode,
+            durationMs: Math.round((performance.now() - startedAt) * 100) / 100,
+        });
+    });
+    next();
+});
 
 app.use(cors());
 app.use(express.json());
@@ -31,10 +51,10 @@ async function startServer(): Promise<void> {
     try {
         await connectDB();
         app.listen(PORT, () => {
-            console.log(`Server is running on port: ${PORT} for health check go on : http://localhost:4000/health`);
+            logger.info("Server started", { port: PORT, healthCheck: "/health" });
         });
     } catch (error) {
-        console.error('Failed to start server:', error);
+        logger.error('Failed to start server', { error });
         process.exitCode = 1;
     }
 }

@@ -2,6 +2,7 @@ import { PricingDocument, IPricingDocument, ILineItem } from "../models/PricingD
 import { calculateLine, calculateDocumentTotals, LineItemInput, DiscountType } from "../calculations/pricing";
 import { AppError } from "../middleware/errorHandler";
 import mongoose from "mongoose";
+import { logger } from "../utils/logger";
 
 interface CreateDocumentInput {
     title: string;
@@ -58,7 +59,7 @@ async function findOwnedDocument(id: string, userId: string): Promise<IPricingDo
         if (err instanceof mongoose.Error.CastError) {
             throw new AppError("Invalid document ID format", 400);
         }
-        console.error("[documentService.findOwnedDocument] Unexpected error", {
+        logger.error("documentService.findOwnedDocument failed", {
             documentId: id,
             userId,
             error: err,
@@ -131,7 +132,7 @@ export async function createDocument(userId: string, input: CreateDocumentInput)
             throw new AppError("Validation failed", 400, details);
         }
 
-        console.error("[documentService.createDocument] Unexpected error", {
+        logger.error("documentService.createDocument failed", {
             userId,
             input,
             error: err,
@@ -144,7 +145,7 @@ export async function listDocuments(userId: string): Promise<IPricingDocument[]>
     try {
         return await PricingDocument.find({ userId }).sort({ createdAt: -1 });
     } catch (err) {
-        console.error("[documentService.listDocuments] Unexpected error", {
+        logger.error("documentService.listDocuments failed", {
             userId,
             error: err,
         });
@@ -185,7 +186,7 @@ export async function updateDocumentMeta(
             throw new AppError("Validation failed", 400, details);
         }
 
-        console.error("[documentService.updateDocumentMeta] Unexpected error", {
+        logger.error("documentService.updateDocumentMeta failed", {
             documentId: id,
             userId,
             error: err,
@@ -204,7 +205,7 @@ export async function deleteDocument(id: string, userId: string): Promise<void> 
     try {
         await doc.deleteOne();
     } catch (err) {
-        console.error("[documentService.deleteDocument] Unexpected error", {
+        logger.error("documentService.deleteDocument failed", {
             documentId: id,
             userId,
             error: err,
@@ -246,7 +247,7 @@ export async function addLineItem(id: string, userId: string, payload: LineItemP
             throw new AppError("Validation failed", 400, details);
         }
 
-        console.error("[documentService.addLineItem] Unexpected error", {
+        logger.error("documentService.addLineItem failed", {
             documentId: id,
             userId,
             error: err,
@@ -284,7 +285,7 @@ export async function updateLineItem(
             throw new AppError("Validation failed", 400, details);
         }
 
-        console.error("[documentService.updateLineItem] Unexpected error", {
+        logger.error("documentService.updateLineItem failed", {
             documentId: id,
             userId,
             lineId,
@@ -311,7 +312,7 @@ export async function removeLineItem(id: string, userId: string, lineId: string)
     } catch (err) {
         if (err instanceof AppError) throw err;
 
-        console.error("[documentService.removeLineItem] Unexpected error", {
+        logger.error("documentService.removeLineItem failed", {
             documentId: id,
             userId,
             lineId,
@@ -346,7 +347,7 @@ export async function finalizeDocument(id: string, userId: string): Promise<IPri
     } catch (err) {
         if (err instanceof AppError) throw err;
 
-        console.error("[documentService.finalizeDocument] Unexpected error", {
+        logger.error("documentService.finalizeDocument failed", {
             documentId: id,
             userId,
             error: err,
@@ -399,7 +400,7 @@ export async function getSummaryReport(userId: string, input: SummaryReportInput
     } catch (err) {
         if (err instanceof AppError) throw err;
 
-        console.error("[documentService.getSummaryReport] Unexpected error", {
+        logger.error("documentService.getSummaryReport failed", {
             userId,
             input,
             error: err,
