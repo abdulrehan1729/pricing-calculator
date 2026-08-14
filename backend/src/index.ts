@@ -50,7 +50,7 @@ app.use(errorHandler);
 async function startServer(): Promise<void> {
     try {
         await connectDB();
-        app.listen(PORT, () => {
+        app.listen(Number(PORT),'0.0.0.0', () => {
             logger.info("Server started", { port: PORT, healthCheck: "/health" });
         });
     } catch (error) {
