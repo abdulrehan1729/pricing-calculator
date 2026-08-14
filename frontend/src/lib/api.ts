@@ -1,7 +1,6 @@
 import { getToken } from "./auth";
 import type { PricingDocument, SummaryReport } from "../types/document";
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
 export class ApiError extends Error {
     status: number;
     details?: unknown;
