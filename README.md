@@ -222,6 +222,7 @@ Line items are **embedded** inside their parent document, rather than stored in 
 ## What I'd Improve Before Production
 
 - Implement the duplicate-finalized-into-draft stretch goal
+- **Backend cold starts:** the API is deployed on Render's free tier, which spins down after periods of inactivity. The first request after idle time may take 30–60 seconds to respond while the instance wakes up — subsequent requests are fast.
 - Share types between frontend and backend via a workspace package instead of hand-syncing two files
 - Move the auth token to an httpOnly cookie
 - Add integration tests for the API routes (currently only the calculation module has unit tests, per the assignment's guidance that it's the highest-value test surface — but route-level and lifecycle tests would add further confidence)
