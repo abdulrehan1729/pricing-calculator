@@ -4,7 +4,7 @@ A full-stack web application for creating pricing documents (invoices/quotes) wi
 
 Built as a take-home assignment for CrossVal's Backend/Full Stack Developer role.
 
-**Live URL:** Not deployed.
+**Live URL:** [https://pricing-calculator-nu-six.vercel.app/](https://pricing-calculator-nu-six.vercel.app/).
 
 ---
 
